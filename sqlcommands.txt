@@ -1,0 +1,19 @@
+CREATE TABLE clothes_info (
+  id INT PRIMARY KEY,
+  brand_name VARCHAR(50),
+  cloth_type VARCHAR(50),
+  MRP DECIMAL(10, 2),
+  Discount INT,
+  Material VARCHAR(50),
+  Color VARCHAR(20),
+  Size VARCHAR(10),
+  Season VARCHAR(20),
+  StockQuantity INT
+);
+
+
+
+INSERT INTO clothes_info VALUES (1, 'Adidas', 'shorts', 250.00, 10, 'Cotton', 'blue', 'L', 'Summer', 200);
+
+SELECT * FROM clothes_info
+
