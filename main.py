@@ -59,8 +59,7 @@ def add_item():
     last_id = mycursor.fetchone()[0]
     new_id = last_id + 1 if last_id is not None else 1
     
-    print(f"Last inserted ID: {last_id}")
-    
+    print(f"Last inserted ID: {last_id+1}")
     brand_name = input("Enter brand name: ")
     cloth_type = input("Enter cloth type: ")
     MRP = float(input("Enter MRP: "))
