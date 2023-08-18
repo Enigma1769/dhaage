@@ -24,30 +24,7 @@ mycursor = mydb.cursor()
 # mycursor.close()
 # mydb.close()
 
-def admin_panel():
-    while True:
-        print("\nAdmin Panel:")
-        print("1. Add Item")
-        print("2. View Inventory")
-        print("3. View Last Inserted ID")
-        print("4. Remove Item by Index")
-        print("5. Exit Admin Panel")
-        
-        admin_choice = int(input("Enter your choice: "))
-        
-        if admin_choice == 1:
-            add_item()
-        elif admin_choice == 2:
-            view_inventory()
-        elif admin_choice == 3:
-            view_last_id()
-        elif admin_choice == 4:
-            remove_item()
-        elif admin_choice == 5:
-            print("Exiting Admin Panel.")
-            break
-        else:
-            print("Invalid choice. Please choose again.")
+
 
 def view_last_id():
     mycursor.execute("SELECT MAX(id) FROM clothes_info")
@@ -77,6 +54,13 @@ def user_panel():
 
 def add_item():
     print("Adding a new item to the inventory:")
+    
+    mycursor.execute("SELECT MAX(id) FROM clothes_info")
+    last_id = mycursor.fetchone()[0]
+    new_id = last_id + 1 if last_id is not None else 1
+    
+    print(f"Last inserted ID: {last_id}")
+    
     brand_name = input("Enter brand name: ")
     cloth_type = input("Enter cloth type: ")
     MRP = float(input("Enter MRP: "))
@@ -87,8 +71,8 @@ def add_item():
     season = input("Enter season: ")
     stock_quantity = int(input("Enter stock quantity: "))
     
-    sql = "INSERT INTO clothes_info (brand_name, cloth_type, MRP, Discount, Material, Color, Size, Season, StockQuantity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (brand_name, cloth_type, MRP, discount, material, color, size, season, stock_quantity)
+    sql = "INSERT INTO clothes_info (id, brand_name, cloth_type, MRP, Discount, Material, Color, Size, Season, StockQuantity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (new_id, brand_name, cloth_type, MRP, discount, material, color, size, season, stock_quantity)
     
     mycursor.execute(sql, val)
     mydb.commit()
@@ -98,7 +82,7 @@ def add_item():
 def view_inventory():
     print("Viewing inventory:")
     mycursor.execute("SELECT * FROM clothes_info")
-    result = mycursor.fetchall()
+    result = mycursor.fetchall() #[(1,),(2,)...]
     
     for row in result:
         print(row)
@@ -108,14 +92,47 @@ def exit_program():
     mydb.close()
     exit()
 
-menu = {
-    1: add_item,
-    2: view_inventory,
-    3: exit_program
-}
 
+def admin_panel():
+    while True:
+        print("\nAdmin Panel:")
+        print("1. Add Item to Inventory")
+        print("2. View Inventory")
+        print("3. View Last Inserted ID")
+        print("4. Remove Item by Index")
+        print("5. Exit Admin Panel")
+        
+        admin_choice = int(input("Enter your choice: "))
+        
+        if admin_choice == 1:
+            add_item()
+        elif admin_choice == 2:
+            view_inventory()
+        elif admin_choice == 3:
+            view_last_id()
+        elif admin_choice == 4:
+            remove_item()
+        elif admin_choice == 5:
+            print("Exiting Admin Panel.")
+            break
+        else:
+            print("Invalid choice. Please choose again.")
 
 while True:
+    print('''
+$$$$$$$\  $$\                                               
+$$  __$$\ $$ |                                              
+$$ |  $$ |$$$$$$$\   $$$$$$\   $$$$$$\   $$$$$$\   $$$$$$\  
+$$ |  $$ |$$  __$$\  \____$$\  \____$$\ $$  __$$\ $$  __$$\ 
+$$ |  $$ |$$ |  $$ | $$$$$$$ | $$$$$$$ |$$ /  $$ |$$$$$$$$ |
+$$ |  $$ |$$ |  $$ |$$  __$$ |$$  __$$ |$$ |  $$ |$$   ____|
+$$$$$$$  |$$ |  $$ |\$$$$$$$ |\$$$$$$$ |\$$$$$$$ |\$$$$$$$\ 
+\_______/ \__|  \__| \_______| \_______| \____$$ | \_______|
+                                        $$\   $$ |          
+        Your Clothes                    \$$$$$$  |          
+                                         \______/         
+          ''')
+    
     print("\nMain Menu:")
     print("1. Admin Access")
     print("2. User Access")
