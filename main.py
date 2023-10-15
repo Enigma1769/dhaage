@@ -149,7 +149,7 @@ def admin_panel():
         print("1. Add Item to Inventory")
         print("2. View Inventory")
         print("3. View Last Inserted ID")
-        print("4. Remove Item by Index #Currently not working")
+        print("4. Remove Item by Index")
         print("5. Exit Admin Panel")
         
         admin_choice = int(input("Enter your choice: "))
