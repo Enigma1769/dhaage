@@ -1,18 +1,9 @@
-import mysql.connector as msc
-import mypass
-pwd= mypass.pwd()
-
-mydb = msc.connect(
-  host="localhost",
-  user="root",
-  password=pwd,
-  database="dhaage"
-)
-
+from connection import connect
 #print(mydb)
 # Create a cursor
+mydb = connect()
 mycursor = mydb.cursor()
-
+connection = mycursor
 # # Executing the query to test
 # query = 'SELECT * FROM clothes_info'
 # mycursor.execute(query)
@@ -34,15 +25,19 @@ def view_last_id():
 
 def user_panel():
     while True:
-        print("\nUser Panel:")
+        print("\nUser Panel")
         print("1. View Inventory")
-        print("2. Exit User Panel")
+        print("2. Enter Shop")
+        print("3. Exit User Panel")
         
         user_choice = int(input("Enter your choice: "))
         
         if user_choice == 1:
             view_inventory()
         elif user_choice == 2:
+            bill_calc()
+            selected_items = []
+        elif user_choice == 3:
             print("Exiting User Panel.")
             break
         else:
@@ -114,7 +109,12 @@ def view_inventory():
     result = mycursor.fetchall() #[(1,),(2,)...]
     
     for row in result:
-        print(row)
+        item_id, brand_name, cloth_type, MRP, Discount, Material, Color, Size, Season, StockQuantity = row
+        print(f"ID: {item_id}, Brand: {brand_name}, Type: {cloth_type}, Price: {MRP}, Discount(%): {Discount}, Material: {Material}, Colour: {Color}, Size: {Size}, Season: {Season} Stocks Remaining: {StockQuantity}")
+        print()
+        
+        
+        
         
 def exit_program():
     print("Exiting the program.")
@@ -170,6 +170,90 @@ def admin_panel():
         else:
             print("Invalid choice. Please choose again.")
 
+def display_items():
+    # Execute a query to retrieve all items
+    query = "SELECT id, brand_name, cloth_type, MRP FROM clothes_info"
+    mycursor.execute(query)
+
+    # Print the items
+    print("Available items:")
+    for row in mycursor.fetchall():
+        item_id, brand_name, cloth_type, mrp = row
+        print(f"ID: {item_id}, Brand: {brand_name}, Type: {cloth_type}, Price: {mrp}")
+    print()
+    
+
+def buy_items():
+    # Create an empty list to store the selected item IDs
+    selected_items = []
+
+    while True:
+        item_id = input("Enter the ID of the item to buy (or 'q' to quit): ")
+        
+        if item_id == 'q':
+            break
+        
+        selected_items.append(int(item_id))
+    
+    return selected_items
+
+def calculate_bill(item_ids):
+    # Create a string of placeholders for the item IDs
+    placeholders = ', '.join(['%s'] * len(item_ids))
+
+    # Execute a query to retrieve the item details
+    query = f"SELECT id, brand_name, cloth_type, MRP, Discount FROM clothes_info WHERE id IN ({placeholders})"
+    mycursor.execute(query, item_ids)
+
+    # Calculate the total bill amount and money saved
+    total_amount = 0
+    total_saved = 0
+    bought_items = []
+    for row in mycursor.fetchall():
+        item_id, brand_name, cloth_type, mrp, discount = row
+        discounted_price = mrp - (mrp * discount / 100)
+        total_amount += discounted_price
+        total_saved += (mrp - discounted_price)
+        bought_items.append((item_id, brand_name, cloth_type, discounted_price))
+
+    # Print the bought items
+    print("Bought items:")
+    for item in bought_items:
+        item_id, brand_name, cloth_type, price = item
+        print(f"ID: {item_id}, Brand: {brand_name}, Type: {cloth_type}, Price: {price}")
+
+    # Print the total money saved
+    print(f"Total money saved: {total_saved}")
+
+    return total_amount
+
+def bill_calc():
+    selected_items = []
+
+    while True:
+        print("1. Display available items")
+        print("2. Buy items")
+        print("3. Calculate bill")
+        print("4. Quit")
+        
+        choice = input("Enter your choice: ")
+        
+        if choice == '1':
+            display_items()
+        elif choice == '2':
+            selected_items = buy_items()
+        elif choice == '3':
+            if selected_items:
+                total_bill = calculate_bill(selected_items)
+                print(f"The total bill amount is: {total_bill}")
+            else:
+                print("No items have been bought yet.")
+        elif choice == '4':
+            selected_items = []
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
 while True:
     print('''
 $$$$$$$\  $$\                                               
@@ -189,7 +273,6 @@ $$$$$$$  |$$ |  $$ |\$$$$$$$ |\$$$$$$$ |\$$$$$$$ |\$$$$$$$\
     print("1. Admin Access")
     print("2. User Access")
     print("3. Exit")
-    
     main_choice = int(input("Enter your choice: "))
     
     if main_choice == 1:
