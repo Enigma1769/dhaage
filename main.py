@@ -1,6 +1,28 @@
 import mysql.connector as msc
 import mypass
 pwd= mypass.pwd()
+
+
+
+try:
+  with open("pass.txt", "r") as file:
+    file_contents = file.read()
+    l = [item.strip() for item in file_contents.strip("[]").split(",")]
+    host=l[1]
+    user=l[2]
+    password=l[3]
+    database='dhaage' 
+except:
+    passfile=open('pass.txt','w+')
+    host=input("Enter the host(localhost): ")
+    user=input("Enter the user(root): ")
+    password=input("Enter the database password: ")
+    database='dhaage'
+    l=[host,user,password,database]
+    passfile.write(str(l))
+
+
+
 mydb = msc.connect(
   host="localhost",
   user="root",
@@ -57,7 +79,7 @@ def admin_panel():
         print("1. Add Item to Inventory")
         print("2. View Inventory")
         print("3. View Last Inserted ID")
-        print("4. Remove Item by Index #Currently not working")
+        print("4. Remove Item by Index")
         print("5. Exit Admin Panel")
         
         admin_choice = int(input("Enter your choice: "))
