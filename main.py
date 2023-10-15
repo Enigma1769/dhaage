@@ -2,27 +2,6 @@ import mysql.connector as msc
 import mypass
 pwd= mypass.pwd()
 
-
-
-try:
-  with open("pass.txt", "r") as file:
-    file_contents = file.read()
-    l = [item.strip() for item in file_contents.strip("[]").split(",")]
-    host=l[1]
-    user=l[2]
-    password=l[3]
-    database='dhaage' 
-except:
-    passfile=open('pass.txt','w+')
-    host=input("Enter the host(localhost): ")
-    user=input("Enter the user(root): ")
-    password=input("Enter the database password: ")
-    database='dhaage'
-    l=[host,user,password,database]
-    passfile.write(str(l))
-
-
-
 mydb = msc.connect(
   host="localhost",
   user="root",
@@ -50,12 +29,8 @@ mycursor = mydb.cursor()
 
 def view_last_id():
     mycursor.execute("SELECT MAX(id) FROM clothes_info")
-    last_id = mycursor.fetchone()[0]
-    
-    if last_id is not None:
-        print(f"The last inserted ID is: {last_id}")
-    else:
-        print("No items have been inserted yet.")
+    last_id = mycursor.fetchone()[0]  
+    return last_id
 
 def user_panel():
     while True:
@@ -90,6 +65,10 @@ def admin_panel():
             view_inventory()
         elif admin_choice == 3:
             view_last_id()
+            if last_id is not None:
+                print(f"The last inserted ID is: {last_id}")
+            else:
+                print("No items have been inserted yet.")
         elif admin_choice == 4:
             remove_item()
         elif admin_choice == 5:
@@ -145,27 +124,35 @@ def exit_program():
 def remove_item():
     print("Removing an item from the inventory:")
     
-    id_to_remove = int(input("Enter the ID of the item to remove: "))
+    last_id = view_last_id()
+    id_to_remove = input(f"Enter the ID of the item to remove (default~last ID ={last_id}): ")
     
-    sql = "DELETE FROM clothes_info WHERE id = %s"
-    val = (id_to_remove, )
+    if id_to_remove == '':
+        id_to_remove = last_id
+    else:
+        id_to_remove = int(id_to_remove)
     
-    mycursor.execute(sql, val)
-    mydb.commit()
-    
-    print("Item removed successfully!")
-
+    if id_to_remove is not None:
+        sql = "DELETE FROM clothes_info WHERE id = %s"
+        val = (id_to_remove, )
+        
+        mycursor.execute(sql, val)
+        mydb.commit()
+        
+        print("Item removed successfully!")
+    else:
+        print("No items to remove.")
 
 
 
 def admin_panel():
     while True:
-        print("\nAdmin Panel:")
-        print("1. Add Item to Inventory")
-        print("2. View Inventory")
-        print("3. View Last Inserted ID")
-        print("4. Remove Item by Index")
-        print("5. Exit Admin Panel")
+        print("\nAdmin Panel: ")
+        print("1. Add Item to Inventory: ")
+        print("2. View Inventory: ")
+        print("3. View Last Inserted ID: ")
+        print("4. Remove Item by Index: ")
+        print("5. Exit Admin Panel: ")
         
         admin_choice = int(input("Enter your choice: "))
         
