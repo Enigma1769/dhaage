@@ -142,6 +142,21 @@ def exit_program():
     mydb.close()
     exit()
 
+def remove_item():
+    print("Removing an item from the inventory:")
+    
+    id_to_remove = int(input("Enter the ID of the item to remove: "))
+    
+    sql = "DELETE FROM clothes_info WHERE id = %s"
+    val = (id_to_remove, )
+    
+    mycursor.execute(sql, val)
+    mydb.commit()
+    
+    print("Item removed successfully!")
+
+
+
 
 def admin_panel():
     while True:
