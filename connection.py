@@ -1,6 +1,4 @@
 import mysql.connector as msc
-import mypass
-pwd= mypass.pwd()
 def connect():
     try:
         with open('password.txt', 'r+') as passfile:
