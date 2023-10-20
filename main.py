@@ -250,8 +250,9 @@ def bill_calc():
     while True:
         print("1. Display available items")
         print("2. Buy items")
-        print("3. Calculate bill")
-        print("4. Quit")
+        print("3. Preview bought items")
+        print("4. Calculate bill")
+        print("5. Quit")
         
         choice = input("Enter your choice: ")
         
@@ -261,11 +262,16 @@ def bill_calc():
             selected_items = buy_items()
         elif choice == '3':
             if selected_items:
-                total_bill = calculate_bill(selected_items)
-                print(f"The total bill amount is: {total_bill}")
+                preview_bought_items([item[0] for item in selected_items])
             else:
                 print("No items have been bought yet.")
         elif choice == '4':
+            if selected_items:
+                total_bill = calculate_bill([item[0] for item in selected_items])
+                print(f"The total bill amount is: {total_bill}")
+            else:
+                print("No items have been bought yet.")
+        elif choice == '5':
             selected_items = []
             break
         else:
