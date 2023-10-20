@@ -6,8 +6,7 @@ def view_purchase_history():
             reader = csv.reader(file)
             print("History Content Of the File")
             for row in reader:
-                return ('Item ID: ', row[0], ', Quantity: ', row[1], ', Date: ', row[2])
+                print('Item ID: ', row[0], ', Quantity: ', row[1], ', Date: ', row[2])
     except:
         print("No Items in history")
     
-view_purchase_history()
