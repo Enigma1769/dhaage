@@ -10,3 +10,4 @@ def view_purchase_history():
     except:
         print("No Items in history")
     
+view_purchase_history()

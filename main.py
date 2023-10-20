@@ -47,6 +47,30 @@ def buy_items():
     
     return selected_items
 
+def user_panel():
+    while True:
+        print("\nUser Panel")
+        print("1. View Inventory")
+        print("2. Enter Shop")
+        print("3. View Purchase History")
+        print("4. Exit User Panel")
+        
+        user_choice = int(input("Enter your choice: "))
+        
+        if user_choice == 1:
+            view_inventory()
+        elif user_choice == 2:
+            bill_calc()
+            selected_items = []
+        elif user_choice == 3:
+            import history
+            history.view_purchase_history()
+        elif user_choice == 4:
+            print("Exiting User Panel.")
+            break
+        else:
+            print("Invalid choice. Please choose again.")
+            
 def admin_panel():
     while True:
         print("\nAdmin Panel:")
