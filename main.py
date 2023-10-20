@@ -200,8 +200,7 @@ def display_items():
     
 
 def buy_items():
-    # Create an empty list to store the selected item IDs
-    selected_items = []
+    global selected_items
 
     while True:
         item_id = input("Enter the ID of the item to buy (or 'q' to quit): ")
@@ -213,6 +212,7 @@ def buy_items():
         selected_items.append((int(item_id), quantity))
         update_stock_quantity(int(item_id), quantity)
         write_purchase_history(int(item_id), quantity)
+        preview_bought_items([(int(item_id), quantity)])  # Preview the added item
     
     return selected_items
 
