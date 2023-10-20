@@ -1,12 +1,12 @@
+
+import csv
+from datetime import datetime
 from connection import connect
 #print(mydb)
 # Create a cursor
 mydb = connect()
 mycursor = mydb.cursor()
 connection = mycursor
-
-import csv
-from datetime import datetime
 
 def get_item_name(item_id):
     mycursor.execute("SELECT brand_name FROM clothes_info WHERE id = %s", (item_id,))
