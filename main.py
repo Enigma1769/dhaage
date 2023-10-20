@@ -4,18 +4,6 @@ from connection import connect
 mydb = connect()
 mycursor = mydb.cursor()
 connection = mycursor
-# # Executing the query to test
-# query = 'SELECT * FROM clothes_info'
-# mycursor.execute(query)
-# # Fetch and print the results
-# result = mycursor.fetchall()
-# for row in result:
-#     print(row)
-
-# Close the cursor and database connection
-# mycursor.close()
-# mydb.close()
-
 
 
 def view_last_id():
