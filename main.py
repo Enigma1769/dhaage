@@ -217,12 +217,12 @@ def buy_items():
     return selected_items
 
 def preview_bought_items(items):
-    item_ids = [item[0] for item in items]
-    quantities = {item[0]: item[1] for item in items}
-    placeholders = ', '.join(['%s'] * len(item_ids))
-    mycursor.execute(f"SELECT * FROM clothes_info WHERE id IN ({placeholders})", item_ids)
-    for row in mycursor.fetchall():
-        print(row, "Quantity:", quantities[row[0]])
+    for item in items:
+        item_id, quantity = item
+        mycursor.execute("SELECT * FROM clothes_info WHERE id = %s", (item_id,))
+        row = mycursor.fetchone()
+        print(row, "Quantity:", quantity)
+
 
 
 def calculate_bill(item_ids):
