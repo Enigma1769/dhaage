@@ -23,6 +23,12 @@ def view_last_id():
     last_id = mycursor.fetchone()[0]  
     return last_id
 
+def update_stock_quantity(item_id, quantity):
+    mycursor.execute("UPDATE clothes_info SET StockQuantity = StockQuantity - %s WHERE id = %s", (quantity, item_id))
+    mydb.commit()
+
+
+
 def user_panel():
     while True:
         print("\nUser Panel")
