@@ -16,12 +16,11 @@ def get_item_name(item_id):
     else:
         return None
 
-def write_purchase_history(item_id, brand_name, quantity, total_price):
-    item_name = get_item_name(brand_name)
-    if item_name is not None:
+def write_purchase_history(item_id, brand_name, cloth_type, quantity, total_price):
+    if brand_name is not None:
         with open('purchase_history.csv', 'a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([item_id, item_name, quantity, total_price, str(datetime.now())[:-7]])
+            writer.writerow([item_id, brand_name, cloth_type, quantity, total_price, str(datetime.now())[:-7]])
 
 def view_last_id():
     mycursor.execute("SELECT MAX(id) FROM clothes_info")
