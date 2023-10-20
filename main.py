@@ -208,6 +208,12 @@ def buy_items():
     
     return selected_items
 
+def preview_bought_items(item_ids):
+    placeholders = ', '.join(['%s'] * len(item_ids))
+    mycursor.execute(f"SELECT * FROM clothes_info WHERE id IN ({placeholders})", item_ids)
+    for row in mycursor.fetchall():
+        print(row)
+
 def calculate_bill(item_ids):
     # Create a string of placeholders for the item IDs
     placeholders = ', '.join(['%s'] * len(item_ids))
