@@ -19,8 +19,8 @@ def get_item_name(item_id):
 
 
 
-def write_purchase_history(item_id, quantity):
-    item_name = get_item_name(item_id)
+def write_purchase_history(brand_name, quantity):
+    item_name = get_item_name(brand_name)
     if item_name is not None:
         with open('purchase_history.csv', 'a', newline='') as file:
             writer = csv.writer(file)
@@ -52,30 +52,37 @@ def buy_items():
     return selected_items
 
 
-def user_panel():
+def admin_panel():
     while True:
-        print("\nUser Panel")
-        print("1. View Inventory")
-        print("2. Enter Shop")
-        print("3. View Purchase History")
-        print("4. Exit User Panel")
+        print("\nAdmin Panel:")
+        print("1. Add Item to Inventory")
+        print("2. View Inventory")
+        print("3. View Last Inserted ID")
+        print("4. Remove Item by Index")
+        print("5. View Purchase History")
+        print("6. Exit Admin Panel")
         
-        user_choice = int(input("Enter your choice: "))
+        admin_choice = int(input("Enter your choice: "))
         
-        if user_choice == 1:
+        if admin_choice == 1:
+            add_item()
+        elif admin_choice == 2:
             view_inventory()
-        elif user_choice == 2:
-            bill_calc()
-            selected_items = []
-        elif user_choice == 3:
-            import history
-            history.view_purchase_history()
-        elif user_choice == 4:
-            print("Exiting User Panel.")
+        elif admin_choice == 3:
+            view_last_id()
+            if last_id is not None:
+                print(f"The last inserted ID is: {last_id}")
+            else:
+                print("No items have been inserted yet.")
+        elif admin_choice == 4:
+            remove_item()
+        elif admin_choice == 5:
+            view_purchase_history()
+        elif admin_choice == 6:
+            print("Exiting Admin Panel.")
             break
         else:
             print("Invalid choice. Please choose again.")
-
 def admin_panel():
     while True:
         print("\nAdmin Panel:")
