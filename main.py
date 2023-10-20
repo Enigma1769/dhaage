@@ -8,7 +8,6 @@ connection = mycursor
 import csv
 from datetime import datetime
 
-
 def get_item_name(item_id):
     mycursor.execute("SELECT brand_name FROM clothes_info WHERE id = %s", (item_id,))
     row = mycursor.fetchone()
@@ -17,15 +16,12 @@ def get_item_name(item_id):
     else:
         return None
 
-
-
 def write_purchase_history(brand_name, quantity):
     item_name = get_item_name(brand_name)
     if item_name is not None:
         with open('purchase_history.csv', 'a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([item_name, quantity, str(datetime.now())[:-7]])
-
 
 def view_last_id():
     mycursor.execute("SELECT MAX(id) FROM clothes_info")
@@ -50,7 +46,6 @@ def buy_items():
         update_stock_quantity(int(item_id), quantity)
     
     return selected_items
-
 
 def admin_panel():
     while True:
@@ -83,6 +78,7 @@ def admin_panel():
             break
         else:
             print("Invalid choice. Please choose again.")
+            
 def admin_panel():
     while True:
         print("\nAdmin Panel:")
@@ -91,9 +87,7 @@ def admin_panel():
         print("3. View Last Inserted ID")
         print("4. Remove Item by Index")
         print("5. Exit Admin Panel")
-        
         admin_choice = int(input("Enter your choice: "))
-        
         if admin_choice == 1:
             add_item()
         elif admin_choice == 2:
@@ -112,7 +106,6 @@ def admin_panel():
         else:
             print("Invalid choice. Please choose again.")
 
-
 def add_item():
     print("Adding a new item to the inventory:")
     
@@ -122,8 +115,6 @@ def add_item():
         new_id = last_id + 1
     else:
         new_id = 1
-
-    
     print(f"Curent ID: {last_id+1}")
     brand_name = input("Enter brand name: ")
     cloth_type = input("Enter cloth type: ")
@@ -134,27 +125,20 @@ def add_item():
     size = input("Enter size: ")
     season = input("Enter season: ")
     stock_quantity = int(input("Enter stock quantity: "))
-    
     sql = "INSERT INTO clothes_info (id, brand_name, cloth_type, MRP, Discount, Material, Color, Size, Season, StockQuantity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     val = (new_id, brand_name, cloth_type, MRP, discount, material, color, size, season, stock_quantity)
-    
     mycursor.execute(sql, val)
     mydb.commit()
-    
     print("Item added successfully!")
 
 def view_inventory():
     print("Viewing inventory:")
     mycursor.execute("SELECT * FROM clothes_info")
     result = mycursor.fetchall() #[(1,),(2,)...]
-    
     for row in result:
         item_id, brand_name, cloth_type, MRP, Discount, Material, Color, Size, Season, StockQuantity = row
         print(f"ID: {item_id}, Brand: {brand_name}, Type: {cloth_type}, Price: {MRP}, Discount(%): {Discount}, Material: {Material}, Colour: {Color}, Size: {Size}, Season: {Season} Stocks Remaining: {StockQuantity}")
         print()
-        
-        
-        
         
 def exit_program():
     print("Exiting the program.")
@@ -163,27 +147,21 @@ def exit_program():
 
 def remove_item():
     print("Removing an item from the inventory:")
-    
     last_id = view_last_id()
     id_to_remove = input(f"Enter the ID of the item to remove (default~last ID ={last_id}): ")
-    
     if id_to_remove == '':
         id_to_remove = last_id
     else:
         id_to_remove = int(id_to_remove)
-    
     if id_to_remove is not None:
         sql = "DELETE FROM clothes_info WHERE id = %s"
         val = (id_to_remove, )
         
         mycursor.execute(sql, val)
         mydb.commit()
-        
         print("Item removed successfully!")
     else:
         print("No items to remove.")
-
-
 
 def admin_panel():
     while True:
@@ -193,9 +171,7 @@ def admin_panel():
         print("3. View Last Inserted ID: ")
         print("4. Remove Item by Index: ")
         print("5. Exit Admin Panel: ")
-        
         admin_choice = int(input("Enter your choice: "))
-        
         if admin_choice == 1:
             add_item()
         elif admin_choice == 2:
@@ -225,7 +201,6 @@ def display_items():
 
 def buy_items():
     global selected_items
-
     while True:
         item_id = input("Enter the ID of the item to buy (or 'q' to quit): ")
         
@@ -237,7 +212,6 @@ def buy_items():
         update_stock_quantity(int(item_id), quantity)
         write_purchase_history(int(item_id), quantity)
         preview_bought_items([(int(item_id), quantity)])  # Preview the added item
-    
     return selected_items
 
 def preview_bought_items(items):
@@ -251,13 +225,8 @@ def preview_bought_items(items):
         else:
             print("No items bought")
 
-
-
 def calculate_bill(items):
-    # Create a dictionary to store the item details
     item_details = {}
-
-    # Calculate the total bill amount and money saved
     total_amount = 0
     total_saved = 0
     total_items = 0
@@ -272,22 +241,15 @@ def calculate_bill(items):
             total_amount += discounted_price * quantity
             total_saved += (mrp - discounted_price) * quantity
             total_items += quantity
-
-            # Group the same items together
             if item_id in item_details:
                 item_details[item_id]['quantity'] += quantity
             else:
                 item_details[item_id] = {'brand_name': brand_name, 'cloth_type': cloth_type, 'price': discounted_price, 'quantity': quantity}
 
-    # Print the bought items
     print("Bought items:")
     for item_id, details in item_details.items():
         print(f"ID: {item_id}, Brand: {details['brand_name']}, Type: {details['cloth_type']}, Price: {details['price']}, Quantity: {details['quantity']}")
-
-    # Print the total money saved
     print(f"Total money saved: {total_saved}")
-
-    # Print the total number of items bought
     print(f"Total number of items bought: {total_items}")
 
     return total_amount
@@ -305,7 +267,7 @@ def bill_calc():
         print("5. Quit")
         
         choice = input("Enter your choice: ")
-        
+
         if choice == '1':
             display_items()
         elif choice == '2':
