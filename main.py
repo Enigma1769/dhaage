@@ -216,11 +216,14 @@ def buy_items():
     
     return selected_items
 
-def preview_bought_items(item_ids):
+def preview_bought_items(items):
+    item_ids = [item[0] for item in items]
+    quantities = {item[0]: item[1] for item in items}
     placeholders = ', '.join(['%s'] * len(item_ids))
     mycursor.execute(f"SELECT * FROM clothes_info WHERE id IN ({placeholders})", item_ids)
     for row in mycursor.fetchall():
-        print(row)
+        print(row, "Quantity:", quantities[row[0]])
+
 
 def calculate_bill(item_ids):
     # Create a string of placeholders for the item IDs
@@ -252,8 +255,9 @@ def calculate_bill(item_ids):
 
     return total_amount
 
+selected_items=[]
 def bill_calc():
-    selected_items = []
+    global selected_items 
 
     while True:
         print()
