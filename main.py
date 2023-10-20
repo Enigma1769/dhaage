@@ -27,6 +27,20 @@ def update_stock_quantity(item_id, quantity):
     mycursor.execute("UPDATE clothes_info SET StockQuantity = StockQuantity - %s WHERE id = %s", (quantity, item_id))
     mydb.commit()
 
+def buy_items():
+    selected_items = []
+
+    while True:
+        item_id = input("Enter the ID of the item to buy (or 'q' to quit): ")
+        
+        if item_id == 'q':
+            break
+        
+        quantity = int(input("Enter the quantity: "))
+        selected_items.append((int(item_id), quantity))
+        update_stock_quantity(int(item_id), quantity)
+    
+    return selected_items
 
 
 def user_panel():
