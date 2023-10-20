@@ -1,9 +1,7 @@
-
 import csv
 from datetime import datetime
 from connection import connect
-#print(mydb)
-# Create a cursor
+
 mydb = connect()
 mycursor = mydb.cursor()
 connection = mycursor
