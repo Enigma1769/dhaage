@@ -225,6 +225,7 @@ def preview_bought_items(items):
 
 
 
+
 def calculate_bill(item_ids):
     # Create a string of placeholders for the item IDs
     placeholders = ', '.join(['%s'] * len(item_ids))
@@ -275,7 +276,7 @@ def bill_calc():
             selected_items = buy_items()
         elif choice == '3':
             if selected_items:
-                preview_bought_items([item[0] for item in selected_items])
+                preview_bought_items(selected_items)
             else:
                 print("No items have been bought yet.")
         elif choice == '4':
