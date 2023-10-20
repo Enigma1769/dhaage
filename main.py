@@ -79,32 +79,6 @@ def admin_panel():
         else:
             print("Invalid choice. Please choose again.")
             
-def admin_panel():
-    while True:
-        print("\nAdmin Panel:")
-        print("1. Add Item to Inventory")
-        print("2. View Inventory")
-        print("3. View Last Inserted ID")
-        print("4. Remove Item by Index")
-        print("5. Exit Admin Panel")
-        admin_choice = int(input("Enter your choice: "))
-        if admin_choice == 1:
-            add_item()
-        elif admin_choice == 2:
-            view_inventory()
-        elif admin_choice == 3:
-            view_last_id()
-            if last_id is not None:
-                print(f"The last inserted ID is: {last_id}")
-            else:
-                print("No items have been inserted yet.")
-        elif admin_choice == 4:
-            remove_item()
-        elif admin_choice == 5:
-            print("Exiting Admin Panel.")
-            break
-        else:
-            print("Invalid choice. Please choose again.")
 
 def add_item():
     print("Adding a new item to the inventory:")
@@ -163,29 +137,6 @@ def remove_item():
     else:
         print("No items to remove.")
 
-def admin_panel():
-    while True:
-        print("\nAdmin Panel: ")
-        print("1. Add Item to Inventory: ")
-        print("2. View Inventory: ")
-        print("3. View Last Inserted ID: ")
-        print("4. Remove Item by Index: ")
-        print("5. Exit Admin Panel: ")
-        admin_choice = int(input("Enter your choice: "))
-        if admin_choice == 1:
-            add_item()
-        elif admin_choice == 2:
-            view_inventory()
-        elif admin_choice == 3:
-            view_last_id()
-        elif admin_choice == 4:
-            remove_item()
-        elif admin_choice == 5:
-            print("Exiting Admin Panel.")
-            break
-        else:
-            print("Invalid choice. Please choose again.")
-
 def display_items():
     # Execute a query to retrieve all items
     query = "SELECT id, brand_name, cloth_type, MRP FROM clothes_info"
@@ -209,8 +160,17 @@ def buy_items():
         
         quantity = int(input("Enter the quantity: "))
         selected_items.append((int(item_id), quantity))
-        update_stock_quantity(int(item_id), quantity)
-        write_purchase_history(int(item_id), quantity)
+        
+        mycursor.execute("SELECT brand_name, MRP, Discount FROM clothes_info WHERE id = %s", (item_id,))
+        row = mycursor.fetchone()
+        if row:
+            brand_name, mrp, discount = row
+            discounted_price = mrp - (mrp * discount / 100)
+            total_price = discounted_price * quantity
+
+            update_stock_quantity(int(item_id), quantity)
+            write_purchase_history(int(item_id), brand_name, quantity, total_price)
+
         preview_bought_items([(int(item_id), quantity)])  # Preview the added item
     return selected_items
 
