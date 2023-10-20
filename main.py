@@ -248,6 +248,7 @@ def bill_calc():
     selected_items = []
 
     while True:
+        print()
         print("1. Display available items")
         print("2. Buy items")
         print("3. Preview bought items")
