@@ -8,10 +8,23 @@ connection = mycursor
 import csv
 from datetime import datetime
 
+
+def get_item_name(item_id):
+    mycursor.execute("SELECT brand_name FROM clothes_info WHERE id = %s", (item_id,))
+    row = mycursor.fetchone()
+    if row:
+        return row[0]
+    else:
+        return None
+
+
+
 def write_purchase_history(item_id, quantity):
-    with open('purchase_history.csv', 'a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([item_id, quantity, datetime.now()])
+    item_name = get_item_name(item_id)
+    if item_name is not None:
+        with open('purchase_history.csv', 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([item_name, quantity, str(datetime.now())[:-7]])
 
 
 def view_last_id():
@@ -44,7 +57,8 @@ def user_panel():
         print("\nUser Panel")
         print("1. View Inventory")
         print("2. Enter Shop")
-        print("3. Exit User Panel")
+        print("3. View Purchase History")
+        print("4. Exit User Panel")
         
         user_choice = int(input("Enter your choice: "))
         
@@ -54,6 +68,9 @@ def user_panel():
             bill_calc()
             selected_items = []
         elif user_choice == 3:
+            import history
+            history.view_purchase_history()
+        elif user_choice == 4:
             print("Exiting User Panel.")
             break
         else:
@@ -219,40 +236,52 @@ def buy_items():
 def preview_bought_items(items):
     for item in items:
         item_id, quantity = item
-        mycursor.execute("SELECT * FROM clothes_info WHERE id = %s", (item_id,))
+        mycursor.execute("SELECT id, brand_name, cloth_type, MRP FROM clothes_info WHERE id = %s", (item_id,))
         row = mycursor.fetchone()
-        print(row, "Quantity:", quantity)
+        if row:
+            item_id, brand_name, cloth_type, mrp = row
+            print(f"ID: {item_id}, Brand: {brand_name}, Type: {cloth_type}, Price: {mrp}, Quantity: {quantity}")
+        else:
+            print("No items bought")
 
 
 
-
-def calculate_bill(item_ids):
-    # Create a string of placeholders for the item IDs
-    placeholders = ', '.join(['%s'] * len(item_ids))
-
-    # Execute a query to retrieve the item details
-    query = f"SELECT id, brand_name, cloth_type, MRP, Discount FROM clothes_info WHERE id IN ({placeholders})"
-    mycursor.execute(query, item_ids)
+def calculate_bill(items):
+    # Create a dictionary to store the item details
+    item_details = {}
 
     # Calculate the total bill amount and money saved
     total_amount = 0
     total_saved = 0
-    bought_items = []
-    for row in mycursor.fetchall():
-        item_id, brand_name, cloth_type, mrp, discount = row
-        discounted_price = mrp - (mrp * discount / 100)
-        total_amount += discounted_price
-        total_saved += (mrp - discounted_price)
-        bought_items.append((item_id, brand_name, cloth_type, discounted_price))
+    total_items = 0
+
+    for item in items:
+        item_id, quantity = item
+        mycursor.execute("SELECT id, brand_name, cloth_type, MRP, Discount FROM clothes_info WHERE id = %s", (item_id,))
+        row = mycursor.fetchone()
+        if row:
+            item_id, brand_name, cloth_type, mrp, discount = row
+            discounted_price = mrp - (mrp * discount / 100)
+            total_amount += discounted_price * quantity
+            total_saved += (mrp - discounted_price) * quantity
+            total_items += quantity
+
+            # Group the same items together
+            if item_id in item_details:
+                item_details[item_id]['quantity'] += quantity
+            else:
+                item_details[item_id] = {'brand_name': brand_name, 'cloth_type': cloth_type, 'price': discounted_price, 'quantity': quantity}
 
     # Print the bought items
     print("Bought items:")
-    for item in bought_items:
-        item_id, brand_name, cloth_type, price = item
-        print(f"ID: {item_id}, Brand: {brand_name}, Type: {cloth_type}, Price: {price}")
+    for item_id, details in item_details.items():
+        print(f"ID: {item_id}, Brand: {details['brand_name']}, Type: {details['cloth_type']}, Price: {details['price']}, Quantity: {details['quantity']}")
 
     # Print the total money saved
     print(f"Total money saved: {total_saved}")
+
+    # Print the total number of items bought
+    print(f"Total number of items bought: {total_items}")
 
     return total_amount
 
@@ -281,7 +310,7 @@ def bill_calc():
                 print("No items have been bought yet.")
         elif choice == '4':
             if selected_items:
-                total_bill = calculate_bill([item[0] for item in selected_items])
+                total_bill = calculate_bill(selected_items)
                 print(f"The total bill amount is: {total_bill}")
             else:
                 print("No items have been bought yet.")
