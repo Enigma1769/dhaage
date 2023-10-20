@@ -5,6 +5,14 @@ mydb = connect()
 mycursor = mydb.cursor()
 connection = mycursor
 
+import csv
+from datetime import datetime
+
+def write_purchase_history(item_id, quantity):
+    with open('purchase_history.csv', 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([item_id, quantity, datetime.now()])
+
 
 def view_last_id():
     mycursor.execute("SELECT MAX(id) FROM clothes_info")
