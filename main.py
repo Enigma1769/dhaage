@@ -177,26 +177,21 @@ def buy_items():
     global selected_items
     while True:
         item_id = input("Enter the ID of the item to buy (or 'q' to quit): ")
-        
         if item_id == 'q':
             break
-        
         quantity = int(input("Enter the quantity: "))
         selected_items.append((int(item_id), quantity))
-        
-        mycursor.execute("SELECT brand_name, MRP, Discount FROM clothes_info WHERE id = %s", (item_id,))
+        mycursor.execute("SELECT brand_name, cloth_type, MRP, Discount FROM clothes_info WHERE id = %s", (item_id,))
         row = mycursor.fetchone()
         if row:
-            brand_name, mrp, discount = row
+            brand_name, cloth_type, mrp, discount = row
             discounted_price = mrp - (mrp * discount / 100)
             total_price = discounted_price * quantity
-
             update_stock_quantity(int(item_id), quantity)
-            write_purchase_history(int(item_id), brand_name, quantity, total_price)
+            write_purchase_history(int(item_id), brand_name, cloth_type, quantity, total_price)
 
         preview_bought_items([(int(item_id), quantity)])  # Preview the added item
     return selected_items
-
 def preview_bought_items(items):
     for item in items:
         item_id, quantity = item
