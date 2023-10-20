@@ -201,7 +201,10 @@ def buy_items():
         if item_id == 'q':
             break
         
-        selected_items.append(int(item_id))
+        quantity = int(input("Enter the quantity: "))
+        selected_items.append((int(item_id), quantity))
+        update_stock_quantity(int(item_id), quantity)
+        write_purchase_history(int(item_id), quantity)
     
     return selected_items
 
